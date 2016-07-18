@@ -36,6 +36,14 @@ const AP_Param::GroupInfo RCMapper::var_info[] PROGMEM = {
     // @User: Advanced
     AP_GROUPINFO("YAW",         3, RCMapper, _ch_yaw, 4),
 
+	// @Param: SAILTRIM
+    // @DisplayName: SAILTRIM channel
+    // @Description: SAILTRIM channel number. This is useful when you have a RC transmitter that can't change the channel order easily. SAILTRIM (also known as main/jib sheet) is normally on channel 5, but you can move it to any channel with this parameter.
+    // @Range: 1 8
+    // @Increment: 1
+    // @User: Advanced
+    AP_GROUPINFO("SAILTRIM",     4, RCMapper, _ch_sailtrim, 5),
+	
     AP_GROUPEND
 };
 

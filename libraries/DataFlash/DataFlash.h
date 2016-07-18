@@ -11,6 +11,7 @@
 #include <AP_GPS.h>
 #include <AP_InertialSensor.h>
 #include <AP_Baro.h>
+#include <AP_Anemometer.h>
 #include <AP_AHRS.h>
 #include <stdint.h>
 
@@ -61,6 +62,7 @@ public:
     void Log_Write_RCIN(void);
     void Log_Write_RCOUT(void);
     void Log_Write_Baro(AP_Baro &baro);
+    void Log_Write_Anemometer(AP_Anemometer &anem);
     void Log_Write_Power(void);
     void Log_Write_AHRS2(AP_AHRS &ahrs);
 #if AP_AHRS_NAVEKF_AVAILABLE
@@ -257,6 +259,13 @@ struct PACKED log_BARO {
     int16_t temperature;
 };
 
+struct PACKED log_ANEM {
+    LOG_PACKET_HEADER;
+    uint32_t timestamp;
+    float   angle;
+    float   speed;
+};
+
 struct PACKED log_AHRS {
     LOG_PACKET_HEADER;
     uint32_t time_ms;
@@ -436,6 +445,8 @@ struct PACKED log_Ubx2 {
       "RCOU",  "Ihhhhhhhhhhhh",     "TimeMS,Ch1,Ch2,Ch3,Ch4,Ch5,Ch6,Ch7,Ch8,Ch9,Ch10,Ch11,Ch12" }, \
     { LOG_BARO_MSG, sizeof(log_BARO), \
       "BARO",  "Iffc",     "TimeMS,Alt,Press,Temp" }, \
+	{ LOG_ANEM_MSG, sizeof(log_ANEM), \
+      "ANEM",  "Iff",     "TimeMS,Angle,Speed" }, \
     { LOG_POWR_MSG, sizeof(log_POWR), \
       "POWR","ICCH","TimeMS,Vcc,VServo,Flags" },  \
     { LOG_CMD_MSG, sizeof(log_Cmd), \
@@ -506,6 +517,7 @@ struct PACKED log_Ubx2 {
 #define LOG_TERRAIN_MSG   150
 #define LOG_UBX1_MSG      151
 #define LOG_UBX2_MSG      152
+#define LOG_ANEM_MSG	  153
 
 // message types 200 to 210 reversed for GPS driver use
 // message types 211 to 220 reversed for autotune use

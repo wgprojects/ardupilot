@@ -6,6 +6,7 @@
 #include <AP_Param.h>
 #include <AP_Math.h>
 #include <AP_Baro.h>
+#include <AP_Anemometer.h>
 #include <AP_AHRS.h>
 
 extern const AP_HAL::HAL& hal;
@@ -767,6 +768,18 @@ void DataFlash_Class::Log_Write_Baro(AP_Baro &baro)
         altitude      : baro.get_altitude(),
         pressure	  : baro.get_pressure(),
         temperature   : (int16_t)(baro.get_temperature() * 100),
+    };
+    WriteBlock(&pkt, sizeof(pkt));
+}
+
+// Write a ANEM packet
+void DataFlash_Class::Log_Write_Anemometer(AP_Anemometer &anem)
+{
+    struct log_ANEM pkt = {
+        LOG_PACKET_HEADER_INIT(LOG_ANEM_MSG),
+        timestamp     : hal.scheduler->millis(),
+        angle         : anem.get_anglecd(),
+        speed	      : anem.get_speed(),
     };
     WriteBlock(&pkt, sizeof(pkt));
 }

@@ -1,0 +1,11 @@
+Release 0.1, July 17, 2016
+------------------------------
+
+Initial conversion from APMrover2 to APMsailboat by adding unimplemented code
+-Library AP_Anemometer for wind measurement
+-Add sail servo
+
+Todo:
+-Implement AP_Anemometer
+-Implement calc_sail_trim
+-Insert Navigator logic which modifies destination waypoint based on wind (i.e. is tacking required)
