@@ -29,6 +29,7 @@ private:
     int32_t         RawPress;
     int32_t         RawTemp;
     uint8_t			_count;
+	uint32_t 		tmp;
 
     AverageFilterInt32_Size4        _temp_filter;
 

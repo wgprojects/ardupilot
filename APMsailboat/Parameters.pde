@@ -1,7 +1,7 @@
 /// -*- tab-width: 4; Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*-
 
 /*
-  APMRover2 parameter definitions
+  APMSailboat parameter definitions
 */
 
 #define GSCALAR(v, name, def) { g.v.vtype, name, Parameters::k_param_ ## v, &g.v, {def_value:def} }
@@ -485,6 +485,10 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Path: ../libraries/AP_Compass/Compass.cpp
 	GOBJECT(compass,                "COMPASS_",	Compass),
 
+	// @Group: ANEM_
+    // @Path: ../libraries/AP_Anemometer/AP_Anemometer.cpp
+	GOBJECT(anemometer,                "ANEM_",	AP_Anemometer),
+	
     // @Group: SCHED_
     // @Path: ../libraries/AP_Scheduler/AP_Scheduler.cpp
     GOBJECT(scheduler, "SCHED_", AP_Scheduler),

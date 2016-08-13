@@ -73,7 +73,10 @@ extern const AP_HAL::HAL& hal;
 // Public Methods //////////////////////////////////////////////////////////////
 bool AP_Anemometer_Custom::init()
 {
-    return true; //TODO
+	tmp = 0;
+	_dir_raw_counts = 1000; //for testing - TODO remove.
+	
+    return true; //TODO actually initialize.
 }
 
 
@@ -82,13 +85,24 @@ bool AP_Anemometer_Custom::init()
 uint8_t AP_Anemometer_Custom::read()
 {
 
-    _last_update = hal.scheduler->millis();
-
+	uint32_t current_ms = hal.scheduler->millis();
+	
+	if(tmp + 100 < current_ms)
+	{
+		tmp = current_ms;
+		_dir_raw_counts = _dir_raw_counts + 10;
+		
+		if(_dir_raw_counts >= 1024)
+			_dir_raw_counts = 0;
+	}
+    _last_update = current_ms;
+	
+	_anglecd = 36500 * ((_dir_raw_counts - _dir_raw_counts_cal)/ 1024.0f);
     return 1;
 }
 
 float AP_Anemometer_Custom::get_anglecd() {
-    return 0;
+    return _anglecd;
 }
 
 float AP_Anemometer_Custom::get_speed() {

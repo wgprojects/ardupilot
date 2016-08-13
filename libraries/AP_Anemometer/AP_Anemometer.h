@@ -29,11 +29,14 @@ public:
 
 protected:
 	uint32_t                            _last_update; // in ms
-	
-private:
-    AP_Float                            _anglecd;
+	AP_Float                            _anglecd;
     AP_Float                            _speed;
 
+	AP_Int16                            _dir_raw_counts;
+	AP_Int16                            _dir_raw_counts_cal;
+	
+private:
+    
 };
 
 
