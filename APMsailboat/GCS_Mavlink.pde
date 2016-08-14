@@ -468,6 +468,12 @@ bool GCS_MAVLINK::try_send_message(enum ap_message id)
         CHECK_PAYLOAD_SIZE(SENSOR_OFFSETS);
         gcs[chan-MAVLINK_COMM_0].send_sensor_offsets(ins, compass, barometer);
         break;
+		
+	case MSG_ANEM:
+		CHECK_PAYLOAD_SIZE(ANEM_DATA);
+		gcs[chan-MAVLINK_COMM_0].send_anem_data(anemometer);
+		break;
+	
 
     case MSG_CURRENT_WAYPOINT:
         CHECK_PAYLOAD_SIZE(MISSION_CURRENT);
@@ -515,7 +521,10 @@ bool GCS_MAVLINK::try_send_message(enum ap_message id)
     case MSG_WIND:
         // unused
         break;
-
+	case MSG_BATTERY2:
+		//unused;
+		break;
+		
     case MSG_RETRY_DEFERRED:
     case MSG_TERRAIN:
         break; // just here to prevent a warning
@@ -685,8 +694,10 @@ GCS_MAVLINK::data_stream_send(void)
     if (gcs_out_of_time) return;
 
     if (stream_trigger(STREAM_RAW_SENSORS)) {
+		send_message(MSG_ANEM);
         send_message(MSG_RAW_IMU1);
         send_message(MSG_RAW_IMU3);
+        
     }
 
     if (gcs_out_of_time) return;

@@ -19,17 +19,20 @@ public:
 
     
     // angle in centidegrees.
-    virtual float           get_anglecd() = 0;
+    virtual int16_t           get_anglecd() = 0;
 
-    // speed in (what units?)
+    // speed in knots
     virtual float           get_speed() = 0;
 	
+	 // angle sensor - raw counts, and current calibration offset
+    AP_Int16           get_angle_raw() { return _dir_raw_counts; }
+	AP_Int16           get_angle_offset() { return _dir_raw_counts_cal; }
 
     static const struct AP_Param::GroupInfo        var_info[];
 
 protected:
 	uint32_t                            _last_update; // in ms
-	AP_Float                            _anglecd;
+	AP_Int16                            _anglecd;
     AP_Float                            _speed;
 
 	AP_Int16                            _dir_raw_counts;

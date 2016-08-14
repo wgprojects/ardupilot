@@ -84,7 +84,13 @@ bool AP_Anemometer_Custom::init()
 // Read the sensor using accumulated data
 uint8_t AP_Anemometer_Custom::read()
 {
-
+	
+	//TODO - use SPI to ask encoder AEAT-6012-A06 for current raw position.
+	//_dir_raw_counts = TODO
+	
+	
+	
+	//Test code, to be removed (until ***)
 	uint32_t current_ms = hal.scheduler->millis();
 	
 	if(tmp + 100 < current_ms)
@@ -92,16 +98,27 @@ uint8_t AP_Anemometer_Custom::read()
 		tmp = current_ms;
 		_dir_raw_counts = _dir_raw_counts + 10;
 		
-		if(_dir_raw_counts >= 1024)
+		if(_dir_raw_counts >= (1<<12))
 			_dir_raw_counts = 0;
 	}
-    _last_update = current_ms;
 	
-	_anglecd = 36500 * ((_dir_raw_counts - _dir_raw_counts_cal)/ 1024.0f);
+	//*** end of test code
+	
+    
+	//Calculate angle from _dir_raw_counts:
+	//Confirm - 10 bit or 12?
+	//Angle in degrees is 365 degrees / 2^12 counts * (reading - calibration)
+	//where reading == calibration at angle == 0, or 'dead ahead'
+	int32_t dir_temp = (((int32_t)36500) * (_dir_raw_counts - _dir_raw_counts_cal)) >> 12;
+	if(dir_temp < 0)
+		dir_temp += 36500;
+	_anglecd = dir_temp;
+	
+	_last_update = current_ms;
     return 1;
 }
 
-float AP_Anemometer_Custom::get_anglecd() {
+int16_t AP_Anemometer_Custom::get_anglecd() {
     return _anglecd;
 }
 

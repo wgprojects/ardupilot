@@ -296,8 +296,10 @@ void GCS_MAVLINK::handle_mission_request(AP_Mission &mission, mavlink_message_t 
     _mav_finalize_message_chan_send(chan, 
                                     MAVLINK_MSG_ID_MISSION_ITEM,
                                     (const char *)&ret_packet,
+									0,//TODO ?? - new parameter minlength in protocol.h
                                     MAVLINK_MSG_ID_MISSION_ITEM_LEN,
                                     MAVLINK_MSG_ID_MISSION_ITEM_CRC);
+									
     return;
 
 mission_item_send_failed:
@@ -1081,7 +1083,7 @@ void GCS_MAVLINK::send_raw_imu(const AP_InertialSensor &ins, const Compass &comp
 #endif
 }
 
-void GCS_MAVLINK::send_scaled_pressure(AP_Baro &barometer)
+void GCS_MAVLINK::send_scaled_pressurex(AP_Baro &barometer)
 {
     float pressure = barometer.get_pressure();
     mavlink_msg_scaled_pressure_send(
@@ -1119,7 +1121,30 @@ void GCS_MAVLINK::send_sensor_offsets(const AP_InertialSensor &ins, const Compas
                                     accel_offsets.x,
                                     accel_offsets.y,
                                     accel_offsets.z);
+									
+	
 }
+
+void GCS_MAVLINK::send_anem_data(AP_Anemometer &anem)
+{
+    // run this message at a much lower rate - otherwise it
+    // pointlessly wastes quite a lot of bandwidth
+    // static uint8_t counter;
+    // if (counter++ < 10) {
+        // return;
+    // }
+    // counter = 0;
+
+    mavlink_msg_anem_data_send(chan,
+                               anem.get_angle_raw(),
+							   anem.get_angle_offset(),
+							   anem.get_anglecd(),
+							   anem.get_speed()
+							   );
+							   
+
+}
+
 
 void GCS_MAVLINK::send_ahrs(AP_AHRS &ahrs)
 {

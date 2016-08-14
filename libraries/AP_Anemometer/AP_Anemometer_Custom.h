@@ -22,7 +22,7 @@ public:
     /* AP_Anemometer public interface: */
     bool            init();
     uint8_t         read();
-    float           get_anglecd();
+    int16_t         get_anglecd();
     float           get_speed();
 
 private:

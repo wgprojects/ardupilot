@@ -28,31 +28,15 @@ extern const AP_HAL::HAL& hal;
 
 // table of user settable parameters
 const AP_Param::GroupInfo AP_Anemometer::var_info[] PROGMEM = {
-    // @Param: AP_WIND_DIR
-    // @DisplayName: apparent wind direction
-    // @Description: Wind angle relative to the bow of the boat, in degrees clockwise.
-    // @Increment: 0.01
-    AP_GROUPINFO("AP_WIND_DIR", 0, AP_Anemometer, _anglecd, 0),
-	
-	// @Param: DIR_RAW_COUNTS
-    // @DisplayName: Current raw reading of wind direction
-    // @Description: Current raw reading of wind direction
-    // @Increment: 1
-    AP_GROUPINFO("DIR_RAW_CTS", 1, AP_Anemometer, _dir_raw_counts, 0),
+    
 
 	// @Param: DIR_RAW_COUNTS_CAL
     // @DisplayName: Raw reading of wind coming from 'dead ahead' 
     // @Description: Raw reading of wind coming from 'dead ahead' 
     // @Increment: 1
-    AP_GROUPINFO("DIR_RAW_CTS_CAL", 2, AP_Anemometer, _dir_raw_counts_cal, 0),
+    AP_GROUPINFO("DIR_RAW_CAL", 0, AP_Anemometer, _dir_raw_counts_cal, 0),
 
 	
-    // @Param: AP_WIND_SPEED
-    // @DisplayName: apparent wind speed
-    // @Description: wind speed relative to the boat ("as masured") in knots
-    // @Increment: 0.01
-    AP_GROUPINFO("AP_WIND_SPEED", 3, AP_Anemometer, _speed, 0),
-
 
     AP_GROUPEND
 };

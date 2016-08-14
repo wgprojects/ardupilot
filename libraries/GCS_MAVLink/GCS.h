@@ -49,6 +49,7 @@ enum ap_message {
     MSG_RANGEFINDER,
     MSG_TERRAIN,
     MSG_BATTERY2,
+	MSG_ANEM,
     MSG_RETRY_DEFERRED // this must be last
 };
 
@@ -194,10 +195,11 @@ public:
     void send_system_time(AP_GPS &gps);
     void send_radio_in(uint8_t receiver_rssi);
     void send_raw_imu(const AP_InertialSensor &ins, const Compass &compass);
-    void send_scaled_pressure(AP_Baro &barometer);
+    void send_scaled_pressurex(AP_Baro &barometer);
     void send_sensor_offsets(const AP_InertialSensor &ins, const Compass &compass, AP_Baro &barometer);
     void send_ahrs(AP_AHRS &ahrs);
     void send_battery2(const AP_BattMonitor &battery);
+	void send_anem_data(AP_Anemometer &anem);
 
     // return a bitmap of active channels. Used by libraries to loop
     // over active channels to send to all active channels    

@@ -31,7 +31,7 @@ void AP_Anemometer_HIL::setHIL(float wind_angle, float wind_speed)
 {
 	
 }
-float AP_Anemometer_HIL::get_anglecd() {
+int16_t AP_Anemometer_HIL::get_anglecd() {
     return 0;
 }
 

@@ -443,6 +443,15 @@
       <field type="uint16_t" name="voltage">voltage in millivolts</field>
       <field type="int16_t" name="current_battery">Battery current, in 10*milliamperes (1 = 10 milliampere), -1: autopilot does not measure the current</field>
     </message>
+	
+	<!--Custom for APMsailboat - see http://ardupilot.org/dev/docs/code-overview-adding-a-new-mavlink-message.html -->
+	<message id="188" name="ANEM_DATA">
+	   <description>Offsets and calibrations values for Anemometer. This makes it easier to debug the calibration process.</description>
+	   <field type="int16_t" name="raw_dir">raw anemometer direction (counts)</field>
+	   <field type="int16_t" name="cal_dir">anemometer direction calibration (counts)</field>
+	   <field type="int16_t" name="dir_cd">anemometer direction calibration (centi-degrees)</field>
+	   <field type="float" name="speed_kt">anemometer speed (knots)</field>
+	</message>
 
      </messages>
 </mavlink>
