@@ -91,30 +91,26 @@ uint8_t AP_Anemometer_Custom::read()
 	
 	
 	//Test code, to be removed (until ***)
-	uint32_t current_ms = hal.scheduler->millis();
-	
-	if(tmp + 100 < current_ms)
-	{
-		tmp = current_ms;
-		_dir_raw_counts = _dir_raw_counts + 10;
+	_dir_raw_counts = _dir_raw_counts + 10;
 		
-		if(_dir_raw_counts >= (1<<12))
-			_dir_raw_counts = 0;
-	}
-	
+	if(_dir_raw_counts >= (1<<12))
+		_dir_raw_counts = 0;
+			
 	//*** end of test code
 	
     
 	//Calculate angle from _dir_raw_counts:
-	//Confirm - 10 bit or 12?
 	//Angle in degrees is 365 degrees / 2^12 counts * (reading - calibration)
 	//where reading == calibration at angle == 0, or 'dead ahead'
-	int32_t dir_temp = (((int32_t)36500) * (_dir_raw_counts - _dir_raw_counts_cal)) >> 12;
-	if(dir_temp < 0)
-		dir_temp += 36500;
-	_anglecd = dir_temp;
+	int32_t dir_temp = (((int32_t)36000) * (_dir_raw_counts - _dir_raw_counts_cal)) >> 12;
 	
-	_last_update = current_ms;
+	//Return +90 is to starboard (right)
+	//Return -90 is to port 	 (left)
+	if(dir_temp > 18000)
+		dir_temp -= 36000;
+	_anglecd = (uint16_t)dir_temp;
+	
+	_last_update = hal.scheduler->millis();
     return 1;
 }
 
