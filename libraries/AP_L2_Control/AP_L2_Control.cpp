@@ -106,7 +106,7 @@ void AP_L2_Control::update_loiter(const struct Location &center_WP, float radius
 	// Only sail 'capture' mode if outside the circle
 	if (xtrackErrCirc > 0.0f ) {
 		_WPcircle = false;
-		_L1.update_waypoint(_current_loc, center_WP); //Tack to the center of the circle.
+		update_waypoint(_current_loc, center_WP); //Tack to the center of the circle.
 		
 	} else {
 		//Run L1 controller - aim to the bearing which is directly 'in irons'.
