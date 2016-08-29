@@ -1,11 +1,23 @@
+
+Todo:
+-Implement AP_Anemometer
+-Implement calc_sail_trim in auto mode
+-When loitering (_WPcircle == true), loose the sails!
+-Fix LogFile.cpp:781 type mismatch
+-Remove HOLD 'in irons' references (not using HOLD mode for pausing, using Loitering in AUTO mode)
+
+
+Notes:
+-Tacking Navigator logic (AP_L2_Control) is an implementation of AP_Navigation (like AP_L1_Control). 
+	To operate, it uses an instance of AP_L1_Control for all the 'heavy lifting', but choosing when to navigate to a waypoint, and when to navigate along a bearing.
+-'Loitering' for a sailboat means: while within radius, point into the wind ('in irons') and fully release the sails.
+
+
+
+
 Release 0.1, July 17, 2016
 ------------------------------
 
 Initial conversion from APMrover2 to APMsailboat by adding unimplemented code
 -Library AP_Anemometer for wind measurement
 -Add sail servo
-
-Todo:
--Implement AP_Anemometer
--Implement calc_sail_trim
--Insert Navigator logic which modifies destination waypoint based on wind (i.e. is tacking required)

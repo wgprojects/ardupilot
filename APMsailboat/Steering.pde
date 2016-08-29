@@ -174,7 +174,7 @@ static void calc_lateral_acceleration()
         return;
     }
 
-	// Calculate the required turn of the wheels
+	// Calculate the required turn of the rudder
 
     // negative error = left turn
 	// positive error = right turn

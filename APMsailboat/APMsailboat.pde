@@ -99,6 +99,7 @@
 #include <AP_Navigation.h>
 #include <APM_Control.h>
 #include <AP_L1_Control.h>
+#include <AP_L2_Control.h>
 #include <AP_BoardConfig.h>
 #include <AP_Frsky_Telem.h>
 
@@ -268,9 +269,10 @@ AP_AHRS_DCM ahrs(ins, barometer, gps);
 #endif
 
 static AP_L1_Control L1_controller(ahrs);
+static AP_L2_Control L2_controller(ahrs, L1_controller, anemometer);
 
 // selected navigation controller
-static AP_Navigation *nav_controller = &L1_controller;
+static AP_Navigation *nav_controller = &L2_controller;
 
 // steering controller
 static AP_SteerController steerController(ahrs);

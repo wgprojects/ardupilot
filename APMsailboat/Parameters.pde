@@ -525,6 +525,13 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Path: ../libraries/AP_L1_Control/AP_L1_Control.cpp
     GOBJECT(L1_controller,         "NAVL1_",   AP_L1_Control),
 
+    // @Group: NAVL2_
+    // @Path: ../libraries/AP_L2_Control/AP_L2_Control.cpp
+    GOBJECT(L2_controller,         "NAVL2_",   AP_L2_Control),
+
+
+
+	
     // @Group: RNGFND
     // @Path: ../libraries/AP_RangeFinder/RangeFinder.cpp
     GOBJECT(sonar,                 "RNGFND", RangeFinder),

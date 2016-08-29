@@ -193,6 +193,7 @@ public:
         k_param_steerController,
         k_param_barometer,
 		k_param_anemometer,
+		k_param_L2_controller,
 
         // 254,255: reserved
         };
