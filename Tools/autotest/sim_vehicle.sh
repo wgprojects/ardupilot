@@ -272,6 +272,10 @@ case $VEHICLE in
         RUNSIM="nice $autotest/pysim/sim_rover.py --home=$SIMHOME --rate=400 $EXTRA_SIM"
         PARMS="Rover.parm"
         ;;
+    APMsailboat)
+        RUNSIM="nice $autotest/pysim/sim_rover.py --home=$SIMHOME --rate=400 $EXTRA_SIM"
+        PARMS="Sailboat.parm"
+        ;;
     *)
         echo "Unknown vehicle simulation type $VEHICLE - please specify vehicle using -v VEHICLE_TYPE"
         usage
