@@ -273,7 +273,7 @@ case $VEHICLE in
         PARMS="Rover.parm"
         ;;
     APMsailboat)
-        RUNSIM="nice $autotest/pysim/sim_rover.py --home=$SIMHOME --rate=400 $EXTRA_SIM"
+        RUNSIM="nice $autotest/pysim/sim_sailboat.py --home=$SIMHOME --rate=400 $EXTRA_SIM"
         PARMS="Sailboat.parm"
         ;;
     *)
