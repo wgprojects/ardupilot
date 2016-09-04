@@ -221,6 +221,8 @@ static AP_Baro_MS5611 barometer(&AP_Baro_MS5611::spi);
 
 #if CONFIG_ANEMOMETER == HAL_ANEMOMETER_CUSTOM
 static AP_Anemometer_Custom anemometer;
+#elif CONFIG_ANEMOMETER == HAL_ANEMOMETER_HIL
+static AP_Anemometer_HIL anemometer;
 #else
  #error Unrecognized CONFIG_ANEMOMETER setting
 #endif

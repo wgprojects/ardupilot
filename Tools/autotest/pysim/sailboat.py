@@ -53,7 +53,9 @@ class Sailboat(Aircraft):
         #  state.wind_speed
         #  self.velocity
         #  state.sail
-
+        wind_v = Vector3(cos(radians(state.wind_dir)), sin(radians(state.wind_dir)), 0) * state.wind_speed
+        apparent_wind = wind_v - self.velocity
+        print('v:%s w:%s a:%s' % (self.velocity, wind_v, apparent_wind))
 
         # how much time has passed?
         t = time.time()

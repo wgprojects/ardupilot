@@ -80,13 +80,14 @@ public:
     AP_Float accel_fail;  // accelerometer failure value
 	AP_Int8  rc_fail;     // fail RC input
 	AP_Int8  baro_disable; // disable simulated barometer
+	AP_Int8  anemometer_disable; // disable simulated anemometer
     AP_Int8  float_exception; // enable floating point exception checks
 
     // wind control
     AP_Float wind_speed;
     AP_Float wind_direction;
     AP_Float wind_turbulance;
-    
+
 	void simstate_send(mavlink_channel_t chan);
 
     void Log_Write_SIMSTATE(DataFlash_Class &dataflash);

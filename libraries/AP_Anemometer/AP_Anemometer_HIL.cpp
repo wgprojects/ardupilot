@@ -29,12 +29,13 @@ uint8_t AP_Anemometer_HIL::read()
 }
 void AP_Anemometer_HIL::setHIL(float wind_angle, float wind_speed)
 {
-	
+    Anglecd = wind_angle;
+    Speed = wind_speed;
 }
 int16_t AP_Anemometer_HIL::get_anglecd() {
-    return 0;
+    return Anglecd * 100;
 }
 
 float AP_Anemometer_HIL::get_speed() {
-    return 0;
+    return Speed;
 }

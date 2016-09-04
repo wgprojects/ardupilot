@@ -62,6 +62,7 @@ private:
     // from the timer
     static void _update_barometer(float height);
     static void _update_compass(float rollDeg, float pitchDeg, float yawDeg);
+    static void _update_anemometer(float wind_direction, float wind_speed, float model_speedN, float model_speedE, float model_speedD);
 
     struct gps_data {
 	    double latitude;
@@ -121,6 +122,7 @@ private:
     static bool _motors_on;
 
     static AP_Baro_HIL *_barometer;
+    static AP_Anemometer_HIL *_anemometer;
     static AP_InertialSensor_HIL *_ins;
     static SITLScheduler *_scheduler;
     static AP_Compass_HIL *_compass;
