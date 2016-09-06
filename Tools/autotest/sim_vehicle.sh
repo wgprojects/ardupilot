@@ -133,11 +133,12 @@ shift $((OPTIND-1))
 kill_tasks() 
 {
     [ "$INSTANCE" -eq "0" ] && {
-        killall -q JSBSim lt-JSBSim ArduPlane.elf ArduCopter.elf APMrover2.elf AntennaTracker.elf
+        killall -q JSBSim lt-JSBSim ArduPlane.elf ArduCopter.elf APMrover2.elf AntennaTracker.elf APMsailboat.elf
         pkill -f runsim.py
         pkill -f sim_tracker.py
         pkill -f sim_rover.py
         pkill -f sim_multicopter.py
+        pkill -f sim_sailboat.py
     }
 }
 
