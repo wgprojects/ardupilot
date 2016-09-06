@@ -49,7 +49,7 @@ def sim_recv(state):
     # map steering and sail to -1/1
     state.steering = (pwm[0]-1500)/500.0
     state.throttle = (pwm[2]-1500)/500.0
-    state.sail = (pwm[4]-1500)/500.0
+    state.sail = (pwm[4]-1500)/1000.0 + .5
     # scale centi-units to full units
     state.wind_speed = speed * 0.01;
     state.wind_dir = direction * 0.01;
@@ -70,7 +70,7 @@ class ControlState:
         self.steering = 0
         ''' throttle from -1 to 1 '''
         self.throttle = 0
-        ''' sail from -1 to 1, where -1 is full reverse, 1 is full forward '''
+        ''' sail from 0 to 1, where 0 is tight sail, 1 is loose '''
         self.sail = 0
         ''' wind speed in m/s '''
         self.wind_speed = 0;

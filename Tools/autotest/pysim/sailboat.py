@@ -5,7 +5,7 @@ simple sailboat simulator core
 
 from aircraft import Aircraft
 import util, time, math
-from math import degrees, radians, sin, cos, pi, asin
+from math import degrees, radians, sin, cos, pi, asin, atan2
 from rotmat import Vector3, Matrix3
 
 class Sailboat(Aircraft):
@@ -47,15 +47,23 @@ class Sailboat(Aircraft):
         steering = state.steering
         throttle = state.throttle
 
-        # TODO: wind effects
-        # using:
-        #  state.wind_dir
-        #  state.wind_speed
-        #  self.velocity
-        #  state.sail
-        wind_v = Vector3(cos(radians(state.wind_dir)), sin(radians(state.wind_dir)), 0) * state.wind_speed
+        # wind from-direction to velocity vector
+        wind_v = Vector3(-cos(radians(state.wind_dir)), -sin(radians(state.wind_dir)), 0) * state.wind_speed
         apparent_wind = wind_v - self.velocity
-        print('v:%s w:%s a:%s' % (self.velocity, wind_v, apparent_wind))
+        # wind vector relative to boat body
+        wind_rel_model = self.dcm.transposed() * apparent_wind;
+        wind_rel_dir = degrees(atan2(-wind_rel_model.y, -wind_rel_model.x));
+        wind_rel_speed = wind_rel_model.length();
+        #print('model_v:%s wind_v:%s apparent_v:%s rel_v:%s rel_dir: %.2f rel_spd: %.1f' % (self.velocity, wind_v, apparent_wind, wind_rel_model, wind_rel_dir, wind_rel_speed))
+
+
+        # TODO: SAIL SIMULATION GOES HERE
+        max_sail_angle = 90 * state.sail;
+        # - actual position from wind direction
+        # math.copysign(max_sail_swing, wind_rel_model.y);
+        # - lookup table force = f(sail_angle, wind_rel_dir, wind_rel_speed)
+        # - acceleration = force / mass
+        # - drag, etc
 
         # how much time has passed?
         t = time.time()
