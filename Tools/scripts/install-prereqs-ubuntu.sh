@@ -12,6 +12,7 @@ PX4_PKGS="python-serial python-argparse openocd flex bison libncurses5-dev \
           zip genromfs"
 UBUNTU64_PKGS="libc6:i386 libgcc1:i386 gcc-4.6-base:i386 libstdc++5:i386 libstdc++6:i386"
 ASSUME_YES=false
+NO_PX4=false
 
 # GNU Tools for ARM Embedded Processors
 # (see https://launchpad.net/gcc-arm-embedded/)
@@ -37,21 +38,29 @@ function maybe_prompt_user() {
 
 
 OPTIND=1  # Reset in case getopts has been used previously in the shell.
-while getopts "y" opt; do
+while getopts "yp" opt; do
     case "$opt" in
         \?)
             exit 1
             ;;
         y)  ASSUME_YES=true
             ;;
+        p)
+            NO_PX4=true
+            ;;
     esac
 done
 
 if $ASSUME_YES; then
-    APT_GET="sudo apt-get -qq --assume-yes"
+    APT_GET="sudo apt-get --assume-yes"
 else
     APT_GET="sudo apt-get"
 fi
+
+if $NO_PX4; then
+    unset PX4_PKGS
+fi
+
 
 sudo usermod -a -G dialout $USER
 
@@ -60,6 +69,9 @@ $APT_GET update
 $APT_GET install $BASE_PKGS $SITL_PKGS $PX4_PKGS $UBUNTU64_PKGS
 sudo pip -q install $PYTHON_PKGS
 
+echo NO_PX4 : $NO_PX4
+
+if ! $NO_PX4; then
 
 if [ ! -d PX4Firmware ]; then
     git clone https://github.com/diydrones/PX4Firmware.git
@@ -90,6 +102,8 @@ if ! grep -Fxq "$exportline" ~/.profile ; then
     else
         echo "Skipping adding $OPT/$ARM_ROOT/bin to PATH."
     fi
+fi
+
 fi
 
 exportline2="export PATH=$CWD/$ARDUPILOT_TOOLS:\$PATH";
