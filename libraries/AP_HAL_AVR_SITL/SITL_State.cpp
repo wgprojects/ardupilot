@@ -321,7 +321,7 @@ void SITL_State::_timer_handler(int signum)
 #ifndef HIL_MODE
 		_update_gps(0, 0, 0, 0, 0, 0, false);
 		_update_barometer(0);
-		_update_anemometer(0, 0, 0, 0, 0);
+		_update_anemometer(0, 0, 0, 0, 0, 0);
 #endif
 		_scheduler->timer_event();
         _scheduler->sitl_end_atomic();
@@ -350,7 +350,8 @@ void SITL_State::_timer_handler(int signum)
         _update_barometer(_sitl->state.altitude);
         _update_compass(_sitl->state.rollDeg, _sitl->state.pitchDeg, _sitl->state.yawDeg);
 		_update_anemometer(_sitl->wind_direction, _sitl->wind_speed,
-			               _sitl->state.speedN, _sitl->state.speedE, _sitl->state.speedD);
+			               _sitl->state.speedN, _sitl->state.speedE, _sitl->state.speedD,
+						   _sitl->state.heading);
 #endif
     }
 
