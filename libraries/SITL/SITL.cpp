@@ -62,6 +62,7 @@ const AP_Param::GroupInfo SITL::var_info[] PROGMEM = {
     AP_GROUPINFO("BARO_GLITCH",   31, SITL,  baro_glitch, 0),
     AP_GROUPINFO("SONAR_SCALE",   32, SITL,  sonar_scale, 12.1212f),
     AP_GROUPINFO("ANEM_DISABLE",  33, SITL,  anemometer_disable, 0),
+    AP_GROUPINFO("WIND_LOWALT",   34, SITL,  wind_lowalt,  0),
     AP_GROUPEND
 };
 

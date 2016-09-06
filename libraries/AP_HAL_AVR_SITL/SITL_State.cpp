@@ -559,7 +559,7 @@ void SITL_State::_simulator_output(void)
     if (altitude < 0) {
         altitude = 0;
     }
-    if (altitude < 60) {
+    if (altitude < 60 && !_sitl->wind_lowalt) {
         wind_speed *= altitude / 60.0f;
     }
 	control.speed      = wind_speed;

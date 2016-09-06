@@ -87,6 +87,7 @@ public:
     AP_Float wind_speed;
     AP_Float wind_direction;
     AP_Float wind_turbulance;
+    AP_Int8 wind_lowalt; // full wind speed at low altitudes, otherwise scales linearly to 60m
 
 	void simstate_send(mavlink_channel_t chan);
 
