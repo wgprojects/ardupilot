@@ -18,10 +18,10 @@ public:
     }
 
     
-    // angle in centidegrees.
+    // relative wind from-direction in centidegrees.
     virtual int16_t           get_anglecd() = 0;
 
-    // speed in knots
+    // speed in m/s
     virtual float           get_speed() = 0;
 	
 	 // angle sensor - raw counts, and current calibration offset
