@@ -209,7 +209,6 @@ static void calc_nav_steer()
 static void calc_sail_trim()
 {
    //TODO implement lookup.
-    channel_steer->servo_out = g.sail_hauled.get();
 }
 
 /*****************************************
