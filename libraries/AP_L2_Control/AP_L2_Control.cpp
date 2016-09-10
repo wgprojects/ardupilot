@@ -29,7 +29,7 @@ void AP_L2_Control::update_waypoint(const struct Location &prev_WP, const struct
 	//Get current position and velocity
     _ahrs.get_position(_current_loc);
 
-	int32_t _target_bearing_cd = get_bearing_cd(_current_loc, next_WP);
+	_target_bearing_cd = get_bearing_cd(_current_loc, next_WP);
 	
 	
 	int16_t wind_dir_relative_cd = _anem.get_anglecd(); 
@@ -140,7 +140,7 @@ int32_t AP_L2_Control::bearing_error_cd(void) const
 
 int32_t AP_L2_Control::target_bearing_cd(void) const
 {
-	return _L1.target_bearing_cd();
+	return _target_bearing_cd;
 }
 
 float AP_L2_Control::turn_distance(float wp_radius) const

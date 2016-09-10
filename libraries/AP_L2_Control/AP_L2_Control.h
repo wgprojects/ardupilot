@@ -82,6 +82,9 @@ private:
 	struct Location lastRequestedDestination;
 	
 	bool _WPcircle;
+	
+	// target bearing in centi-degrees from last update
+	int32_t _target_bearing_cd;
 
 
 };
