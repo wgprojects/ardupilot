@@ -37,12 +37,12 @@ void AP_L2_Control::update_waypoint(const struct Location &prev_WP, const struct
 	int16_t close_hauled_cd = 100 * _close_hauled_angle;
 	close_hauled_cd = constrain_int16(close_hauled_cd, 2000, 6000);
 	
-	int16_t wind_dir_absolute_cd = _ahrs.yaw_sensor + wind_dir_relative_cd;
-	int16_t steer_port_angle = wind_dir_absolute_cd - close_hauled_cd;
-	int16_t steer_starboard_angle = wind_dir_absolute_cd + close_hauled_cd;
+	int32_t wind_dir_absolute_cd = 180 - wrap_180_cd(_ahrs.yaw_sensor) + wind_dir_relative_cd;
+	int32_t steer_port_angle = wind_dir_absolute_cd - close_hauled_cd;
+	int32_t steer_starboard_angle = wind_dir_absolute_cd + close_hauled_cd;
 	
-	int16_t port_error = _target_bearing_cd - steer_port_angle; 			//When destination is in irons, this is positive.
-	int16_t starboard_error = _target_bearing_cd - steer_starboard_angle;	//When destination is in irons, this is positive.
+	int32_t port_error = wrap_180_cd(_target_bearing_cd - steer_port_angle); 			//When destination is in irons, this is positive.
+	int32_t starboard_error = wrap_180_cd(steer_starboard_angle - _target_bearing_cd);	//When destination is in irons, this is positive.
 	
 	if(starboard_error < 0 || port_error < 0)
 	{
