@@ -1,0 +1,39 @@
+--- mavutil.py	2016-09-10 18:19:26.182343982 +0000
++++ /usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py	2016-09-10 18:28:01.192687293 +0000
+@@ -504,6 +504,8 @@
+             map = mode_mapping_apm
+         if mav_type == mavlink.MAV_TYPE_GROUND_ROVER:
+             map = mode_mapping_rover
++        if mav_type == mavlink.MAV_TYPE_SURFACE_BOAT:
++            map = mode_mapping_rover
+         if mav_type == mavlink.MAV_TYPE_ANTENNA_TRACKER:
+             map = mode_mapping_tracker
+         if map is None:
+@@ -1470,6 +1472,8 @@
+         map = mode_mapping_apm
+     if mav_type == mavlink.MAV_TYPE_GROUND_ROVER:
+         map = mode_mapping_rover
++    if mav_type == mavlink.MAV_TYPE_SURFACE_BOAT:
++        map = mode_mapping_rover
+     if mav_type == mavlink.MAV_TYPE_ANTENNA_TRACKER:
+         map = mode_mapping_tracker
+     if map is None:
+@@ -1491,6 +1495,8 @@
+         map = mode_mapping_apm
+     if mav_type == mavlink.MAV_TYPE_GROUND_ROVER:
+         map = mode_mapping_rover
++    if mav_type == mavlink.MAV_TYPE_SURFACE_BOAT:
++        map = mode_mapping_rover
+     if mav_type == mavlink.MAV_TYPE_ANTENNA_TRACKER:
+         map = mode_mapping_tracker
+     if map is None:
+@@ -1514,6 +1520,9 @@
+     if msg.type == mavlink.MAV_TYPE_GROUND_ROVER:
+         if msg.custom_mode in mode_mapping_rover:
+             return mode_mapping_rover[msg.custom_mode]
++    if msg.type == mavlink.MAV_TYPE_SURFACE_BOAT:
++        if msg.custom_mode in mode_mapping_rover:
++            return mode_mapping_rover[msg.custom_mode]
+     if msg.type == mavlink.MAV_TYPE_ANTENNA_TRACKER:
+         if msg.custom_mode in mode_mapping_tracker:
+             return mode_mapping_tracker[msg.custom_mode]
