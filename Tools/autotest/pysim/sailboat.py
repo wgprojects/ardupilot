@@ -16,7 +16,7 @@ class Sailboat(Aircraft):
                  max_accel=1,
                  hull_length=1,
                  max_rudder_turn=35,
-                 turning_circle=2,
+                 turning_circle=5,
                  sail_range = 90,
                  motor=False,
                  sail=True
