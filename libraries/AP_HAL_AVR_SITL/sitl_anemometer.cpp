@@ -49,7 +49,7 @@ void SITL_State::_update_anemometer(float wind_direction, float wind_speed, floa
 
 	Vector3f model_v = Vector3f(model_speedN, model_speedE, 0);
 	// wind comes FROM direction, reverse vector for velocity
-	Vector3f wind_v = Vector3f(-cosf(radians(wind_direction)), -sin(radians(wind_direction)), 0) * wind_speed;
+	Vector3f wind_v = Vector3f(-cosf(radians(wind_direction)), -sinf(radians(wind_direction)), 0) * wind_speed;
 
 	Vector3f apparent = wind_v - model_v;
 
