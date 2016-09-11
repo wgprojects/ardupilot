@@ -351,7 +351,7 @@ void SITL_State::_timer_handler(int signum)
         _update_compass(_sitl->state.rollDeg, _sitl->state.pitchDeg, _sitl->state.yawDeg);
 		_update_anemometer(_sitl->wind_direction, _sitl->wind_speed,
 			               _sitl->state.speedN, _sitl->state.speedE, _sitl->state.speedD,
-						   _sitl->state.heading);
+						   _sitl->state.yawDeg);
 #endif
     }
 

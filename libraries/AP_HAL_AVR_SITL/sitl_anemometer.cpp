@@ -67,9 +67,9 @@ void SITL_State::_update_anemometer(float wind_direction, float wind_speed, floa
 	else if (vane_dir > 180)
 		vane_dir -= 360;
 
-	// printf ("DEBUG: %s %s wind_dir: %.1f wind_speed: %.2f model_dir: %.1f model_speed: %.2f apparent_dir: %.1f apparent_speed: %.2f vane_dir: %.1f\n", __FILE__, __FUNCTION__,
-		// wind_direction, wind_speed, degrees(atan2(model_speedN, model_speedE)), model_v.length(), apparent_dir, apparent_speed, vane_dir);
-
+	   // printf ("DEBUG: %s %s wind_dir: %.1f wind_speed: %.2f model_dir: %.1f model_speed: %.2f apparent_dir: %.1f apparent_speed: %.2f heading: %.1f vane_dir: %.1f\n", __FILE__, __FUNCTION__,
+        // wind_direction, wind_speed, degrees(atan2f(model_speedE, model_speedN)), model_v.length(), apparent_dir, apparent_speed, heading, vane_dir);
+		
 	// printf ("DEBUG:\n");
 
 	_anemometer->setHIL(vane_dir, apparent_speed);
