@@ -7,13 +7,13 @@ extern const AP_HAL::HAL& hal;
 
 // table of user settable parameters
 const AP_Param::GroupInfo AP_L2_Control::var_info[] PROGMEM = {
-    // @Param: CLOSE_ANGLE
+    // @Param: CLOSE_DEG
     // @DisplayName: Close-hauled Min Angle
     // @Description: Angle in degrees - the closest this boat should sail to the wind. Any closer, and tacking begins.
 	// @Units: degrees
 	// @Range: 20-60
 	// @Increment: 1
-    AP_GROUPINFO("CLOSE_ANGLE",    0, AP_L2_Control, _close_hauled_angle, 40),
+    AP_GROUPINFO("CLOSE_DEG",    0, AP_L2_Control, _close_hauled_angle, 40),
 	
   
     AP_GROUPEND
@@ -35,11 +35,23 @@ void AP_L2_Control::update_waypoint(const struct Location &prev_WP, const struct
 	int16_t wind_dir_relative_cd = _anem.get_anglecd(); 
 	
 	int16_t close_hauled_cd = 100 * _close_hauled_angle;
-	close_hauled_cd = constrain_int16(close_hauled_cd, 2000, 6000);
+	close_hauled_cd = constrain_int16(close_hauled_cd, 0, 6000);
 	
-	int32_t wind_dir_absolute_cd = 180 - wrap_180_cd(_ahrs.yaw_sensor) + wind_dir_relative_cd;
+	int32_t wind_dir_absolute_cd = wrap_180_cd(180 + (_ahrs.yaw_sensor + wind_dir_relative_cd));
 	int32_t steer_port_angle = wind_dir_absolute_cd - close_hauled_cd;
 	int32_t steer_starboard_angle = wind_dir_absolute_cd + close_hauled_cd;
+	
+	if(opt)
+	{
+		opt = 0;
+		_test_angle = steer_starboard_angle;
+	}
+	else
+	{
+		opt = 1;
+		_test_angle = steer_port_angle;		
+	}
+	
 	
 	int32_t port_error = wrap_180_cd(_target_bearing_cd - steer_port_angle); 			//When destination is in irons, this is positive.
 	int32_t starboard_error = wrap_180_cd(steer_starboard_angle - _target_bearing_cd);	//When destination is in irons, this is positive.
@@ -140,6 +152,9 @@ int32_t AP_L2_Control::bearing_error_cd(void) const
 
 int32_t AP_L2_Control::target_bearing_cd(void) const
 {
+	//Uncomment to view the port and starboard tacking algorithms in Mission Planner.
+	//Alternates back and forth, using vector 'Direct to current WP'
+	//return _test_angle;
 	return _target_bearing_cd;
 }
 

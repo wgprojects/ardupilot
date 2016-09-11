@@ -85,6 +85,8 @@ private:
 	
 	// target bearing in centi-degrees from last update
 	int32_t _target_bearing_cd;
+	int32_t _test_angle;
+	int8_t opt = 0;
 
 
 };
