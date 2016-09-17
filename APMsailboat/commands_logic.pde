@@ -7,6 +7,7 @@ static void do_within_distance(const AP_Mission::Mission_Command& cmd);
 static void do_change_speed(const AP_Mission::Mission_Command& cmd);
 static void do_set_home(const AP_Mission::Mission_Command& cmd);
 static bool verify_nav_wp(const AP_Mission::Mission_Command& cmd);
+static void do_loiter_unlimited(const AP_Mission::Mission_Command& cmd);
 
 /********************************************************************************/
 // Command Event Handlers
@@ -32,6 +33,10 @@ start_command(const AP_Mission::Mission_Command& cmd)
 	switch(cmd.id){
 		case MAV_CMD_NAV_WAYPOINT:	// Navigate to Waypoint
 			do_nav_wp(cmd);
+			break;
+
+		case MAV_CMD_NAV_LOITER_UNLIM:
+			do_loiter_unlimited(cmd);
 			break;
 
 		case MAV_CMD_NAV_RETURN_TO_LAUNCH:
@@ -153,6 +158,9 @@ static bool verify_command(const AP_Mission::Mission_Command& cmd)
 
 		case MAV_CMD_NAV_WAYPOINT:
 			return verify_nav_wp(cmd);
+			
+		case MAV_CMD_NAV_LOITER_UNLIM:
+			return verify_loiter_unlim();
 
 		case MAV_CMD_NAV_RETURN_TO_LAUNCH:
 			return verify_RTL();
@@ -213,6 +221,17 @@ static bool verify_nav_wp(const AP_Mission::Mission_Command& cmd)
         return true;
     }
 
+    return false;
+}
+
+static void do_loiter_unlimited(const AP_Mission::Mission_Command& cmd)
+{
+    set_next_WP(cmd.content.location);
+}
+
+static bool verify_loiter_unlim()
+{
+    update_loiter();
     return false;
 }
 

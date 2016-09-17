@@ -5,6 +5,8 @@
 
 extern const AP_HAL::HAL& hal;
 
+int8_t AP_L2_Control::opt = 0;
+
 // table of user settable parameters
 const AP_Param::GroupInfo AP_L2_Control::var_info[] PROGMEM = {
     // @Param: CLOSE_DEG
@@ -99,6 +101,7 @@ void AP_L2_Control::update_waypoint(const struct Location &prev_WP, const struct
 	}
 }
 // update L1 control for loitering
+// loiter_direction is ignored (we are not going in circles..)
 void AP_L2_Control::update_loiter(const struct Location &center_WP, float radius, int8_t loiter_direction)
 {
 	struct Location _current_loc;

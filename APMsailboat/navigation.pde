@@ -29,6 +29,10 @@ static void navigate()
 	update_navigation();
 }
 
+static void update_loiter()
+{
+    nav_controller->update_loiter(next_WP, 5, 0); //5 meter diameter circle
+}
 
 void reached_waypoint()
 {       
