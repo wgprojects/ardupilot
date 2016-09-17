@@ -85,6 +85,8 @@ parser.add_option("--simin",  dest="simin",   help="SIM input (IP:port)",       
 parser.add_option("--simout", dest="simout",  help="SIM output (IP:port)",      default="127.0.0.1:5501")
 parser.add_option("--home", dest="home",  type='string', default=None, help="home lat,lng,alt,hdg (required)")
 parser.add_option("--rate", dest="rate", type='int', help="SIM update rate", default=100)
+parser.add_option("--motor", dest="motor", action="store_true", default=False)
+parser.add_option("--no-sail", dest="sail", action="store_false", default=True)
 
 (opts, args) = parser.parse_args()
 
@@ -109,7 +111,7 @@ sim_out.connect(sim_out_address)
 sim_out.setblocking(0)
 
 # create the quadcopter model
-a = Sailboat()
+a = Sailboat(motor = opts.motor, sail = opts.sail)
 
 # initial controls state
 state = ControlState()
