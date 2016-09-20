@@ -81,7 +81,7 @@ class Sailboat(Aircraft):
         # scale force based on how far actual sail angle is from optimal
         # if > max_error degrees, zero force
         max_error = 45
-        sail_error = min(1, abs(sail_optimal - sail_angle) / max_error)
+        sail_error = min(1, abs(sail_optimal - sail_angle) / max_error, abs(sail_optimal + sail_angle) / max_error)
 
         force = force_optimal * (1 - sail_error)
 
