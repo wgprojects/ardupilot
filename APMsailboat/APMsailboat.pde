@@ -941,6 +941,7 @@ static void update_current_mode(void)
         channel_throttle->servo_out = 0;
         channel_steer->servo_out = 0; 
 		channel_sail->servo_out = g.sail_loosed.get();
+        channel_sail->calc_pwm();
         set_reverse(false);
         break;
 
@@ -973,6 +974,7 @@ static void update_navigation()
         if (verify_RTL()) {  
             channel_throttle->servo_out = g.throttle_min.get();
             channel_sail->servo_out = g.sail_loosed.get();
+            channel_sail->calc_pwm();
             set_mode(HOLD);
         }
         break;
