@@ -42,8 +42,8 @@ class Sailboat(Aircraft):
         self.lookup_drag = Interpolate(angle_atk, drag_force)
 
         angle_atk_meas =  [    0,   20,   25,   30,   35,   40,   60,   80,   90,  110,  130,  150,  170,  180]
-        forward_force_p = [    0,    0,   15,   20,   20,   30,   55,   85,  105,  115,  105,  110,  140,  155]
-        forward_force_s = [    0,    0,    5,   15,   30,   40,   65,  120,  150,  180,  155,  185,  165,  155]
+        forward_force_p = [  -10,    0,   15,   20,   20,   30,   55,   85,  105,  115,  105,  110,  140,  155]
+        forward_force_s = [  -10,    0,    5,   15,   30,   40,   65,  120,  150,  180,  155,  185,  165,  155]
         servo_position_p = [2012, 2012, 2000, 1964, 1980, 1940, 1746, 1514, 1466, 1184, 1184, 1184, 1184, 1184]
         servo_position_s = [2012, 2012, 2012, 2012, 1925, 1772, 1473, 1388, 1339, 1197, 1184, 1184, 1184, 1184]
         sail_position_p = [-self.servo_to_sail_angle(x) for x in servo_position_p]
