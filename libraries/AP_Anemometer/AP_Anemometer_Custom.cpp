@@ -117,12 +117,12 @@ uint8_t AP_Anemometer_Custom::read()
         //From timing diagram, chip select is low
         //clock is high 
         hal.gpio->write(__AP_ANEM_SCK, 1); 
-        hal.scheduler->delay_microseconds(1);  //clock delay from the timing diagram, 500 ns latency 
+        hal.scheduler->delay_microseconds(10);  //clock delay from the timing diagram, 500 ns latency 
 
 
         // For first read , clock low; delay; 
         hal.gpio->write(__AP_ANEM_SCK, 0);
-        hal.scheduler->delay_microseconds(1);
+        hal.scheduler->delay_microseconds(10);
 
         uint8_t i;
         for (i = 0; i < 12; i++)// Start reading the bits here 
@@ -130,16 +130,16 @@ uint8_t AP_Anemometer_Custom::read()
 
             // clock high to read
             hal.gpio->write(__AP_ANEM_SCK, 1); 
-            hal.scheduler->delay_microseconds(1); 
+            hal.scheduler->delay_microseconds(10); 
 
             AnemoRdg = AnemoRdg << 1;
             AnemoRdg = AnemoRdg || (int16_t)hal.gpio->read(__AP_ANEM_MISO);// read MISO
 
-            hal.scheduler->delay_microseconds(1); 
+            hal.scheduler->delay_microseconds(10); 
             
             //clock low; 
             hal.gpio->write(__AP_ANEM_SCK, 0);
-            hal.scheduler->delay_microseconds(1); // delay the millisecs on clock for 1 us 
+            hal.scheduler->delay_microseconds(10); // delay the millisecs on clock for 1 us 
         }
 
         //Done reading, set SCK and CS high
