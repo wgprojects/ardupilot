@@ -15,9 +15,10 @@ class Sailboat(Aircraft):
                  max_speed=5,
                  max_accel=1,
                  hull_length=1,
+                 mass=3,
                  max_rudder_turn=35,
                  turning_circle=5,
-                 sail_range = 90,
+                 sail_range = 70,
                  motor=False,
                  sail=True
                  ):
@@ -26,6 +27,7 @@ class Sailboat(Aircraft):
         self.max_accel = max_accel
         self.turning_circle = turning_circle
         self.hull_length = hull_length
+        self.mass = mass
         self.max_rudder_turn = max_rudder_turn
         self.last_time = time.time()
         self.have_motor = motor
@@ -38,6 +40,20 @@ class Sailboat(Aircraft):
         drag_force = [10, 25, 40,  55,  65,  119, 160, 175, 180]
         self.lookup_lift = Interpolate(angle_atk, lift_force)
         self.lookup_drag = Interpolate(angle_atk, drag_force)
+
+        angle_atk_meas =  [    0,   20,   25,   30,   35,   40,   60,   80,   90,  110,  130,  150,  170,  180]
+        forward_force_p = [  -10,    0,   15,   20,   20,   30,   55,   85,  105,  115,  105,  110,  140,  155]
+        forward_force_s = [  -10,    0,    5,   15,   30,   40,   65,  120,  150,  180,  155,  185,  165,  155]
+        servo_position_p = [2012, 2012, 2000, 1964, 1980, 1940, 1746, 1514, 1466, 1184, 1184, 1184, 1184, 1184]
+        servo_position_s = [2012, 2012, 2012, 2012, 1925, 1772, 1473, 1388, 1339, 1197, 1184, 1184, 1184, 1184]
+        sail_position_p = [-self.servo_to_sail_angle(x) for x in servo_position_p]
+        sail_position_s = [+self.servo_to_sail_angle(x) for x in servo_position_s]
+        self.lookup_force = [Interpolate(angle_atk_meas, forward_force_p), Interpolate(angle_atk_meas, forward_force_s)]
+        self.lookup_sail_pos = [Interpolate(angle_atk_meas, sail_position_p), Interpolate(angle_atk_meas, sail_position_s)]
+
+    def servo_to_sail_angle(self, servo):
+        # TODO: correct formula to account for non-linearity of rigging
+        return (2012 - servo) / 828.0 * self.sail_range
 
     def turn_circle(self, steering):
         '''return turning circle (diameter) in meters for steering angle proportion in degrees
@@ -55,6 +71,26 @@ class Sailboat(Aircraft):
         t = c / speed
         rate = 360.0 / t
         return rate
+
+
+    def sail_force_measured(self, sail_angle, wind_rel_dir, wind_rel_speed):
+        side = 1 if wind_rel_dir > 0 else 0
+        force_optimal = self.lookup_force[side][abs(wind_rel_dir)] * 9.80665002864 / 1000 # grams to newtons
+        sail_optimal = self.lookup_sail_pos[side][abs(wind_rel_dir)]
+
+        # scale force based on how far actual sail angle is from optimal
+        # if > max_error degrees, zero force
+        max_error = 45
+        sail_error = min(1, abs(sail_optimal - sail_angle) / max_error, abs(sail_optimal + sail_angle) / max_error)
+
+        force = force_optimal * (1 - sail_error)
+
+        print('sail_angle:%.2f wind_rel_dir:%.2f force_optimal:%.2f sail_optimal:%.2f sail_error:%.2f force:%.3f'
+            % (sail_angle, wind_rel_dir, force_optimal, sail_optimal, sail_error, force))
+
+        return force / self.mass * (wind_rel_speed * wind_rel_speed * .05)
+
+
 
     def sail_force_lift_drag(self, sail_angle, wind_rel_dir, wind_rel_speed):
         # TODO: replace with measured lookup table
@@ -79,23 +115,17 @@ class Sailboat(Aircraft):
             lift *= 0.7
 
         wind_orientation = Matrix3()
-        #wind_orientation.from_euler(0, 0, radians(180 + wind_rel_dir))
-        wind_orientation.from_euler(0, 0, radians(wind_rel_dir))
+        wind_orientation.from_euler(0, 0, radians(180 + wind_rel_dir))
 
-        Ft = Vector3(-1*drag, lift, 0) #Total aerodynamic force, perpendicular to chord of the boom (in the wind's coordinate system)
-        force_boat = wind_orientation * Ft
+        force_boat = wind_orientation * Vector3(drag, lift, 0)
 
-        #force_drag = wind_orientation * Vector3(drag, 0, 0)
-        #force_lift = wind_orientation * Vector3(0, lift, 0)
+        force_drag = wind_orientation * Vector3(drag, 0, 0)
+        force_lift = wind_orientation * Vector3(0, lift, 0)
 
-        #print('sail_angle:%.2f wind_rel_dir:%.2f wind_rel_spd:%.2f mag:%.2f lift:%.2f drag:%.2f f_lift:%s f_drag:%s f:%s'
-        #    % (sail_angle, wind_rel_dir, wind_rel_speed, angle_mag, lift, drag, force_lift, force_drag, force_boat))
+        #print('sail_angle:%.2f wind_rel_dir:%.2f mag:%.2f lift:%.2f drag:%.2f f_lift:%s f_drag:%s f:%s'
+        #    % (sail_angle, wind_rel_dir, angle_mag, lift, drag, force_lift, force_drag, force_boat))
 
-        print('sail_angle:%.2f wind_rel_dir:%.2f wind_rel_spd:%.2f lift&drag:%s f:%s' 
-        % (sail_angle, wind_rel_dir, wind_rel_speed, Ft, force_boat))
-
-        return force_boat #.x * wind_rel_speed * wind_rel_speed * 0.001
-
+        return force_boat.x * wind_rel_speed * wind_rel_speed * 0.001
 
 
     def update(self, state):
@@ -161,8 +191,8 @@ class Sailboat(Aircraft):
 
             self.sail_angle = sail_angle
 
-            force = self.sail_force_lift_drag(sail_angle, wind_rel_dir, wind_rel_speed)
-            accel_body += Vector3(force.x * 0.1, force.y * 0.01, 0) #force is a vector in body coords. F=m*a
+            force = self.sail_force_measured(sail_angle, wind_rel_dir, wind_rel_speed)
+            accel_body += Vector3(force, 0, 0)
 
 
 #        print('speed=%f throttle=%f steering=%f yaw_rate=%f accel=%f' % (speed, state.throttle, state.steering, yaw_rate, accel))
@@ -180,7 +210,7 @@ class Sailboat(Aircraft):
         accel_earth = self.dcm * accel_body
         accel_earth += Vector3(0, 0, self.gravity)
 
-        # drag - note the keel preferentially adds drag side-to-side
+        # drag
         accel_earth -= self.velocity * 0.1
 
         # if we're on the ground, then our vertical acceleration is limited
@@ -193,7 +223,7 @@ class Sailboat(Aircraft):
 
         # new velocity vector
         self.velocity += accel_earth * delta_time
-       
+
         # new position vector
         old_position = self.position.copy()
         self.position += self.velocity * delta_time

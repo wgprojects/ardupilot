@@ -49,7 +49,7 @@ def sim_recv(state):
     # map steering and sail to -1/1
     state.steering = (pwm[0]-1500)/500.0
     state.throttle = (pwm[2]-1500)/500.0
-    state.sail = (pwm[4]-1500)/1000.0 + .5
+    state.sail = (2012-pwm[4])/828.0
     # scale centi-units to full units
     state.wind_speed = speed * 0.01;
     state.wind_dir = direction * 0.01;

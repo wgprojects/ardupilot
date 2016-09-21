@@ -203,12 +203,43 @@ static void calc_nav_steer()
     channel_steer->servo_out = steerController.get_steering_out_lat_accel(lateral_acceleration);
 }
 
+int16_t angle_atk_meas[] =    {    0,   20,   25,   30,   35,   40,   60,   80,   90,  110,  130,  150,  170,  180 };
+uint16_t servo_position_p[] = { 2012, 2012, 2000, 1964, 1980, 1940, 1746, 1514, 1466, 1184, 1184, 1184, 1184, 1184 };
+uint16_t servo_position_s[] = { 2012, 2012, 2012, 2012, 1925, 1772, 1473, 1388, 1339, 1197, 1184, 1184, 1184, 1184 };
+uint16_t* servo_position[] =  { servo_position_p, servo_position_s };
+
+uint16_t servo_from_wind_angle(int16_t wind_angle) {
+    int16_t wind_abs = abs(wind_angle);
+
+    size_t s = 0;
+    size_t e = sizeof(angle_atk_meas) / sizeof(angle_atk_meas[0]) - 1;
+
+    while (e > s + 1) {
+        size_t m = (s + e) / 2;
+        if (wind_abs < angle_atk_meas[m])
+            e = m;
+        else
+            s = m;
+    }
+    float x = wind_abs - angle_atk_meas[s];
+    float xt = angle_atk_meas[e] - angle_atk_meas[s];
+    float dx = x / xt;
+
+    uint8_t side = wind_angle > 0 ? 1 : 0;
+    uint16_t vs = servo_position[side][s];
+    uint16_t ve = servo_position[side][e];
+
+    uint16_t val = vs * (1 - dx) + ve * (dx);
+
+    return val;
+}
+
 /*
   calculate sail trim given relative wind direction (maybe speed)
  */
 static void calc_sail_trim()
 {
-   //TODO implement lookup.
+    channel_sail->radio_out = servo_from_wind_angle(anemometer.get_anglecd() / 100);
 }
 
 /*****************************************
@@ -232,7 +263,7 @@ static void set_servos(void)
             channel_throttle->radio_out = channel_throttle->radio_trim;
         }
 	} else {       
-        channel_sail->calc_pwm();
+        //channel_sail->calc_pwm(); // setting radio_out directly!
         channel_steer->calc_pwm();
         if (in_reverse) {
             channel_throttle->servo_out = constrain_int16(channel_throttle->servo_out, 
