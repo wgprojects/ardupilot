@@ -2,6 +2,21 @@
 #ifndef __AP_ANEM_CUSTOM_H__
 #define __AP_ANEM_CUSTOM_H__
 
+// CS = 55 
+// SCK = 52 
+// MISO = 50
+// Notes:  MISO used only for reading no writes on this, so dont need to set to low. So, before reading anemometer 
+// magnetic sensor AERT08, set CS(chip select AET6012) chip selects to write on bus, SCK to low, leave MISO to high
+#define __AP_ANEM_CS 55
+#define __AP_ANEM_SCK 52
+#define __AP_ANEM_MISO 50
+
+// All AEAT-6010/6012 Magnetic Encoder settings for Ardupilot, the numbers that match on the chip are different 
+
+// The actual wiring matches to a different set, using rhe follwing mapping(?)pins_arduino_mega.cpp, use 12 bits
+
+
+
 #define DIR_FILTER_SIZE 2
 
 #include "AP_Anemometer.h"
@@ -31,7 +46,7 @@ private:
     uint8_t			_count;
 	uint32_t 		tmp;
 
-    AverageFilterInt32_Size4        _temp_filter;
+    //AverageFilterInt32_Size4        _temp_filter;
 
 };
 

@@ -73,10 +73,23 @@ extern const AP_HAL::HAL& hal;
 // Public Methods //////////////////////////////////////////////////////////////
 bool AP_Anemometer_Custom::init()
 {
-	tmp = 0;
+    tmp = 0;
 	_dir_raw_counts = 1000; //for testing - TODO remove.
 	
-    return true; //TODO actually initialize.
+
+	// Following code is for setting, GPIO for serial port
+	// For AET6010, 6012, magnetic encoder chip the following settings are initialized, clock, Clock Speed, and MISO
+	// HAL_GPIO_OUTPUT = 1; 
+	// MISO, only to read so, HAL_GPIO_OUTPUT, nothing to write on MISO
+	hal.gpio->pinMode(__AP_ANEM_CS, HAL_GPIO_OUTPUT);
+	hal.gpio->pinMode(__AP_ANEM_SCK, HAL_GPIO_OUTPUT);
+	hal.gpio->pinMode(__AP_ANEM_MISO, HAL_GPIO_INPUT);
+
+	// Now select AET5012, system clock, and MISO  to HIGH. 
+	hal.gpio->write(__AP_ANEM_CS, 1);
+	hal.gpio->write(__AP_ANEM_SCK, 1);
+    
+    return true;
 }
 
 
@@ -84,32 +97,71 @@ bool AP_Anemometer_Custom::init()
 // Read the sensor using accumulated data
 uint8_t AP_Anemometer_Custom::read()
 {
-	
-	//TODO - use SPI to ask encoder AEAT-6012-A06 for current raw position.
-	//_dir_raw_counts = TODO
-	
-	
-	
-	//Test code, to be removed (until ***)
-	_dir_raw_counts = _dir_raw_counts + 10;
-		
-	if(_dir_raw_counts >= (1<<12))
-		_dir_raw_counts = 0;
-			
-	//*** end of test code
-	
-    
-	//Calculate angle from _dir_raw_counts:
-	//Angle in degrees is 365 degrees / 2^12 counts * (reading - calibration)
-	//where reading == calibration at angle == 0, or 'dead ahead'
-	int32_t dir_temp = (((int32_t)36000) * (_dir_raw_counts - _dir_raw_counts_cal)) >> 12;
-	
-	//Return +90 is to starboard (right)
-	//Return -90 is to port 	 (left)
-	if(dir_temp > 18000)
-		dir_temp -= 36000;
-	_anglecd = (uint16_t)dir_temp;
-	
+	if(_dir_raw_counts_cal == 42)
+    {
+        //TODO - use SPI to ask encoder AEAT-6012-A06 for current raw position.
+        //TODO - use SPI to ask encoder AEAT-6012-A06 for current raw position. Changed for the SPIO reading
+
+        //Note: 12 bits for SPIO reading, on wind direction = 4096 decimal
+
+        //_dir_raw_counts = TODO
+
+        //Offset = Offset to be deducted from angle reading and passed to getanglecd() 
+
+        int16_t AnemoRdg = 0; //initialize AnemoRdg; 
+
+        //Intializing the  GPIO to read
+        hal.gpio->write(__AP_ANEM_CS, 0);
+
+        
+        //From timing diagram, chip select is low
+        //clock is high 
+        hal.gpio->write(__AP_ANEM_SCK, 1); 
+        hal.scheduler->delay_microseconds(1);  //clock delay from the timing diagram, 500 ns latency 
+
+
+        // For first read , clock low; delay; 
+        hal.gpio->write(__AP_ANEM_SCK, 0);
+        hal.scheduler->delay_microseconds(1);
+
+        uint8_t i;
+        for (i = 0; i < 12; i++)// Start reading the bits here 
+        {
+
+            // clock high to read
+            hal.gpio->write(__AP_ANEM_SCK, 1); 
+            hal.scheduler->delay_microseconds(1); 
+
+            AnemoRdg = AnemoRdg << 1;
+            AnemoRdg = AnemoRdg || (int16_t)hal.gpio->read(__AP_ANEM_MISO);// read MISO
+
+            hal.scheduler->delay_microseconds(1); 
+            
+            //clock low; 
+            hal.gpio->write(__AP_ANEM_SCK, 0);
+            hal.scheduler->delay_microseconds(1); // delay the millisecs on clock for 1 us 
+        }
+
+        //Done reading, set SCK and CS high
+        hal.gpio->write(__AP_ANEM_SCK, 1);
+        hal.gpio->write(__AP_ANEM_CS, 1); 
+        
+
+        _dir_raw_counts = AnemoRdg; //Set new value
+        
+        
+        //Calculate angle from _dir_raw_counts:
+        //Angle in degrees is 365 degrees / 2^12 counts * (reading - calibration)
+        //where reading == calibration at angle == 0, or 'dead ahead'
+        int32_t dir_temp = (((int32_t)36000) * (_dir_raw_counts - _dir_raw_counts_cal)) >> 12;
+        
+        //Return +90 is to starboard (right)
+        //Return -90 is to port 	 (left)
+        if(dir_temp > 18000)
+            dir_temp -= 36000;
+        _anglecd = (uint16_t)dir_temp;
+        
+    }
 	_last_update = hal.scheduler->millis();
     return 1;
 }

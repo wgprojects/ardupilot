@@ -79,17 +79,22 @@ class Sailboat(Aircraft):
             lift *= 0.7
 
         wind_orientation = Matrix3()
-        wind_orientation.from_euler(0, 0, radians(180 + wind_rel_dir))
+        #wind_orientation.from_euler(0, 0, radians(180 + wind_rel_dir))
+        wind_orientation.from_euler(0, 0, radians(wind_rel_dir))
 
-        force_boat = wind_orientation * Vector3(drag, lift, 0)
+        Ft = Vector3(-1*drag, lift, 0) #Total aerodynamic force, perpendicular to chord of the boom (in the wind's coordinate system)
+        force_boat = wind_orientation * Ft
 
-        force_drag = wind_orientation * Vector3(drag, 0, 0)
-        force_lift = wind_orientation * Vector3(0, lift, 0)
+        #force_drag = wind_orientation * Vector3(drag, 0, 0)
+        #force_lift = wind_orientation * Vector3(0, lift, 0)
 
-        #print('sail_angle:%.2f wind_rel_dir:%.2f mag:%.2f lift:%.2f drag:%.2f f_lift:%s f_drag:%s f:%s'
-        #    % (sail_angle, wind_rel_dir, angle_mag, lift, drag, force_lift, force_drag, force_boat))
+        #print('sail_angle:%.2f wind_rel_dir:%.2f wind_rel_spd:%.2f mag:%.2f lift:%.2f drag:%.2f f_lift:%s f_drag:%s f:%s'
+        #    % (sail_angle, wind_rel_dir, wind_rel_speed, angle_mag, lift, drag, force_lift, force_drag, force_boat))
 
-        return force_boat.x * wind_rel_speed * wind_rel_speed * 0.001
+        print('sail_angle:%.2f wind_rel_dir:%.2f wind_rel_spd:%.2f lift&drag:%s f:%s' 
+        % (sail_angle, wind_rel_dir, wind_rel_speed, Ft, force_boat))
+
+        return force_boat #.x * wind_rel_speed * wind_rel_speed * 0.001
 
 
 
@@ -157,7 +162,7 @@ class Sailboat(Aircraft):
             self.sail_angle = sail_angle
 
             force = self.sail_force_lift_drag(sail_angle, wind_rel_dir, wind_rel_speed)
-            accel_body += Vector3(force, 0, 0)
+            accel_body += Vector3(force.x * 0.1, force.y * 0.01, 0) #force is a vector in body coords. F=m*a
 
 
 #        print('speed=%f throttle=%f steering=%f yaw_rate=%f accel=%f' % (speed, state.throttle, state.steering, yaw_rate, accel))
@@ -175,7 +180,7 @@ class Sailboat(Aircraft):
         accel_earth = self.dcm * accel_body
         accel_earth += Vector3(0, 0, self.gravity)
 
-        # drag
+        # drag - note the keel preferentially adds drag side-to-side
         accel_earth -= self.velocity * 0.1
 
         # if we're on the ground, then our vertical acceleration is limited
@@ -188,7 +193,7 @@ class Sailboat(Aircraft):
 
         # new velocity vector
         self.velocity += accel_earth * delta_time
-
+       
         # new position vector
         old_position = self.position.copy()
         self.position += self.velocity * delta_time
