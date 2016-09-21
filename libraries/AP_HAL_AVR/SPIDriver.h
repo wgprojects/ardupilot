@@ -32,6 +32,7 @@ private:
 
     AVRSPI3DeviceDriver* _dataflash;
     AVRSPI3DeviceDriver* _optflow_spi3;
+    AVRSPI0DeviceDriver* _windvane;
 };
 
 #endif // __AP_HAL_AVR_SPI_DRIVER_H__

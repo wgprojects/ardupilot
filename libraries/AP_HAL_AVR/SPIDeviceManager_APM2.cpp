@@ -52,6 +52,12 @@ void APM2SPIDeviceManager::init(void* machtnichts) {
      * ubrr3 = 0 */
     _dataflash = new AVRSPI3DeviceDriver(df_cs, 0, 0);
     _dataflash->init();
+    
+    /* Wind Vane CS is on PORTB7 */
+    AVRDigitalSource* wv_cs = new AVRDigitalSource(_BV(7), PB);
+
+    _windvane = new AVRSPI0DeviceDriver(wv_cs,  SPI0_SPCR_500kHz, SPI0_SPCR_8MHz, SPI0_SPSR_8MHz);
+    _windvane->init();
 
     /* optflow uses mode 3 and a clock of 2mhz
      * ucsr3c = _BV(UCPHA3N)|_BV(UCPOL3) = 3
@@ -73,6 +79,8 @@ AP_HAL::SPIDeviceDriver* APM2SPIDeviceManager::device(enum AP_HAL::SPIDevice d)
             return _optflow_spi0;
         case AP_HAL::SPIDevice_ADNS3080_SPI3:
             return _optflow_spi3;
+        case AP_HAL::SPIDevice_AEAT6012_SPI0:
+            return _windvane;
         default:
             return NULL;
     };

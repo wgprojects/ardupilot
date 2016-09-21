@@ -25,6 +25,7 @@
 
 #include "AP_Anemometer.h"
 #include <AverageFilter.h>
+#include <AP_HAL.h>
 
 class AP_Anemometer_Custom : public AP_Anemometer
 {
@@ -49,6 +50,9 @@ private:
     int32_t         RawTemp;
     uint8_t			_count;
 	uint32_t 		tmp;
+    
+    // SPI device
+    AP_HAL::SPIDeviceDriver *_spi;
 
     //AverageFilterInt32_Size4        _temp_filter;
 

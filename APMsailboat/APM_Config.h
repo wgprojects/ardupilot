@@ -4,3 +4,4 @@
 // their default values, place the appropriate #define statements here.
 
 
+#define MOUNT                 DISABLED            // disable the camera gimbal to save 8K of flash space
