@@ -76,6 +76,19 @@ bool AP_Anemometer_Custom::init()
     tmp = 0;
 	_dir_raw_counts = 1000; //for testing - TODO remove.
 	
+
+	// Following code is for setting, GPIO for serial port
+	// For AET6010, 6012, magnetic encoder chip the following settings are initialized, clock, Clock Speed, and MISO
+	// HAL_GPIO_OUTPUT = 1; 
+	// MISO, only to read so, HAL_GPIO_OUTPUT, nothing to write on MISO
+	hal.gpio->pinMode(__AP_ANEM_CS, HAL_GPIO_OUTPUT);
+	hal.gpio->pinMode(__AP_ANEM_SCK, HAL_GPIO_OUTPUT);
+	hal.gpio->pinMode(__AP_ANEM_MISO, HAL_GPIO_INPUT);
+
+	// Now select AET5012, system clock, and MISO  to HIGH. 
+	hal.gpio->write(__AP_ANEM_CS, 1);
+	hal.gpio->write(__AP_ANEM_SCK, 1);
+    
     return true;
 }
 
@@ -84,44 +97,53 @@ bool AP_Anemometer_Custom::init()
 // Read the sensor using accumulated data
 uint8_t AP_Anemometer_Custom::read()
 {
-    AP_HAL::Semaphore *spi_sem;
+
+        
+    //Note: 12 bits for SPIO reading, on wind direction = 4096 decimal
+
+    //Offset = Offset to be deducted from angle reading and passed to getanglecd() 
+
+    int16_t AnemoRdg = 0; //initialize AnemoRdg; 
+
+    //Intializing the  GPIO to read
+    hal.gpio->write(__AP_ANEM_CS, 0);
+
     
-	_spi = hal.spi->device(AP_HAL::SPIDevice_AEAT6012_SPI0);
-    if (_spi != NULL) 
+    //From timing diagram, chip select is low
+    //clock is high 
+    hal.gpio->write(__AP_ANEM_SCK, 1); 
+    hal.scheduler->delay_microseconds(1);  //clock delay from the timing diagram, 500 ns latency 
+
+
+    // For first read , clock low; delay; 
+    hal.gpio->write(__AP_ANEM_SCK, 0);
+    hal.scheduler->delay_microseconds(1);
+
+    hal.gpio->pinMode(__AP_ANEM_MISO, HAL_GPIO_INPUT);
+    uint8_t i;
+    for (i = 0; i < 12; i++)// Start reading the bits here 
     {
-        // get spi bus semaphore
-        spi_sem = _spi->get_semaphore();
 
-        // try to get control of the spi bus
-        if (spi_sem == NULL || !spi_sem->take_nonblocking()) {
-            return 1;
-        }
+        // clock high to read
+        hal.gpio->write(__AP_ANEM_SCK, 1); 
+        hal.scheduler->delay_microseconds(1); 
 
-        _spi->cs_assert();
-        hal.scheduler->delay_microseconds(50);
-
-        // send register address
-        uint8_t high = _spi->transfer(0); //High 8 bits are in here
-        uint8_t low = _spi->transfer(0);  //Low nibble is in high nibble of this byte
+        AnemoRdg = AnemoRdg << 1;
+        AnemoRdg = AnemoRdg | (int16_t)hal.gpio->read(__AP_ANEM_MISO);// read MISO
         
-        // uint16_t counts = 0x00FF & (uint16_t)high;
-        // counts = counts << 4;
-        // counts |= 0x0F & ((uint16_t)low >> 4);
-        uint16_t counts = ((uint16_t)high << 8) || ((uint16_t)low);
-        counts = counts >> 4;
-        
-        
-        _spi->cs_release();
-
-        // release the spi bus
-        spi_sem->give();
-        
-        _dir_raw_counts = (int16_t)counts;
+        //clock low; 
+        hal.gpio->write(__AP_ANEM_SCK, 0);
+        hal.scheduler->delay_microseconds(1); // delay the millisecs on clock for 1 us 
     }
-    else
-    {
-        _dir_raw_counts = 999;
-    }
+
+    //Done reading, set SCK and CS high
+    hal.gpio->write(__AP_ANEM_SCK, 1);
+    hal.gpio->write(__AP_ANEM_CS, 1); 
+    
+
+    _dir_raw_counts = AnemoRdg + 1; //Set new value
+    
+    
     //Calculate angle from _dir_raw_counts:
     //Angle in degrees is 365 degrees / 2^12 counts * (reading - calibration)
     //where reading == calibration at angle == 0, or 'dead ahead'
@@ -133,7 +155,6 @@ uint8_t AP_Anemometer_Custom::read()
         dir_temp -= 36000;
     _anglecd = (uint16_t)dir_temp;
     
-
 	_last_update = hal.scheduler->millis();
     return 1;
 }

@@ -8,12 +8,13 @@
 // Notes:  MISO used only for reading no writes on this, so dont need to set to low. So, before reading anemometer 
 // magnetic sensor AERT08, set CS(chip select AET6012) chip selects to write on bus, SCK to low, leave MISO to high
 
-//PL5 (was PL5 55)
-#define __AP_ANEM_CS 56
-//PK0 (was SCK 52) then was PL4 55
-#define __AP_ANEM_SCK 62
-//PB7 (was MISO 50)
-#define __AP_ANEM_MISO 54
+
+//PB7 13
+#define __AP_ANEM_CS 13
+//PL4 45
+#define __AP_ANEM_SCK 45
+//PL5 44
+#define __AP_ANEM_MISO 44
 
 // All AEAT-6010/6012 Magnetic Encoder settings for Ardupilot, the numbers that match on the chip are different 
 

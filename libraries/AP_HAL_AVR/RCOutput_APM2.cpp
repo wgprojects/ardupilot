@@ -55,8 +55,8 @@ void APM2RCOutput::init(void* machtnichts) {
     //--------------- TIMER5: CH_10, and CH_11 ---------------
     // NB TIMER5 is shared with PPM input from RCInput_APM2.cpp
     // The TIMER5 registers are assumed to be setup already.
-    hal.gpio->pinMode(45, HAL_GPIO_OUTPUT); // CH_10 (PL4/OC5B)
-    hal.gpio->pinMode(44, HAL_GPIO_OUTPUT); // CH_11 (PL5/OC5C)
+    // hal.gpio->pinMode(45, HAL_GPIO_OUTPUT); // CH_10 (PL4/OC5B)
+    // hal.gpio->pinMode(44, HAL_GPIO_OUTPUT); // CH_11 (PL5/OC5C)
 }
 
 /* Output freq (1/period) control */
